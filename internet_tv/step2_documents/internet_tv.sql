@@ -1,4 +1,4 @@
--- 以下internet_tv用SQLファイル
+-- 上書き設定
 DROP DATABASE IF EXISTS internet_tv;
 CREATE DATABASE IF NOT EXISTS internet_tv;
 USE internet_tv;
@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS channels,
                      genres,
                      episode_genre;
 
+-- テーブル定義
 -- チャンネル (channels) テーブル
 CREATE TABLE channels (
     channel_id INT NOT NULL AUTO_INCREMENT,
@@ -25,10 +26,8 @@ CREATE TABLE programs (
     program_title VARCHAR(50) NOT NULL,
     program_detail TEXT,
     episode_id INT NOT NULL, -- エピソードテーブルの外部キー
-    channel_id INT NOT NULL, -- チャンネルテーブルの外部キー
     PRIMARY KEY (program_id),
-    INDEX (program_title),
-    INDEX (program_id)
+    INDEX (program_title)
 );
 
 -- タイムテーブル (time_tables) テーブル
@@ -39,9 +38,7 @@ CREATE TABLE time_tables (
     air_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
     channel_id INT NOT NULL, -- チャンネルテーブルの外部キー
-    PRIMARY KEY (timetable_id),
-    INDEX (program_id),
-    INDEX (channel_id)
+    PRIMARY KEY (timetable_id)
 );
 
 -- エピソード (episodes) テーブル
@@ -52,18 +49,17 @@ CREATE TABLE episodes (
     episode_detail TEXT,
     video_duration TIME NOT NULL,
     release_date DATE,
-    season_id INT NOT NULL, -- シーズンテーブルの外部キー
+    season_id INT, -- シーズンテーブルの外部キー
     PRIMARY KEY (episode_id),
     INDEX (episode_title),
-    INDEX (episode_number),
-    INDEX (season_id)
+    INDEX (episode_number)
 );
 
 -- シーズン (seasons) テーブル
 CREATE TABLE seasons (
     season_id INT NOT NULL AUTO_INCREMENT,
-    season_title VARCHAR(20) NOT NULL,
-    season_num VARCHAR(20),
+    season_title VARCHAR(50) NOT NULL,
+    season_num INT,
     episode_total_num INT NOT NULL,
     PRIMARY KEY (season_id),
     INDEX (season_title),
@@ -79,18 +75,16 @@ CREATE TABLE genres (
 );
 
 -- エピソードとジャンルの中間テーブル (episode_genre) テーブル
-CREATE TABLE episode_genre (
-    episode_genre_id INT NOT NULL AUTO_INCREMENT,
-    episode_id INT NOT NULL, -- エピソードテーブルの外部キー
+CREATE TABLE program_genre (
+    program_genre_id INT NOT NULL AUTO_INCREMENT,
+    program_id INT NOT NULL, -- プログラムテーブルの外部キー
     genre_id INT NOT NULL, -- ジャンルテーブルの外部キー
-    PRIMARY KEY (episode_genre_id),
-    INDEX (episode_id),
-    INDEX (genre_id)
+    PRIMARY KEY (program_genre_id)
 );
 
+-- 外部キー設定
 ALTER TABLE programs
-    ADD FOREIGN KEY (episode_id) REFERENCES episodes(episode_id) ON DELETE CASCADE,
-    ADD  FOREIGN KEY (channel_id) REFERENCES channels(channel_id) ON DELETE CASCADE;
+    ADD FOREIGN KEY (episode_id) REFERENCES episodes(episode_id) ON DELETE CASCADE;
 
 ALTER TABLE time_tables
     ADD FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE CASCADE,
@@ -99,7 +93,15 @@ ALTER TABLE time_tables
 ALTER TABLE episodes
     ADD FOREIGN KEY (season_id) REFERENCES seasons(season_id) ON DELETE CASCADE;
 
-ALTER TABLE episode_genre
-    ADD FOREIGN KEY (episode_id) REFERENCES episodes(episode_id),
+ALTER TABLE program_genre
+    ADD FOREIGN KEY (program_id) REFERENCES programs(program_id),
     ADD FOREIGN KEY (genre_id) REFERENCES genres(genre_id) ON DELETE CASCADE;
+
+source ./test_data/load_channels.dump ;
+source ./test_data/load_episodes.dump ;
+source ./test_data/load_genres.dump ;
+source ./test_data/load_programs.dump ;
+source ./test_data/load_episodes.dump ;
+source ./test_data/load_seasons.dump ;
+source ./test_data/load_time_tables.dump ;
 

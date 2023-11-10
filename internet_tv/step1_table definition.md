@@ -33,7 +33,7 @@
 | episode_detail     | TEXT     | YES   |     |        |                 |
 | video_duration     | TIME     |       |     |        |                 |
 | release_date       | DATE     |       |     |        |                 |
-| genre_id           | INT      |       | FK  |        |                 |
+| genre_id           | INT      | YES   | FK  |        |                 |
 | season_id          | INT      | 　　   | FK  |        |                 |
 
 シーズン (seasons)
@@ -43,6 +43,7 @@
 | seasson_title  | VARCHAR(20)|     | INDEX |        |                 |
 | season_num     | VARCHAR(20) | YES   | INDEX |        |                 |
 | episode_total_num  | INT  |       |     |        | 1               |
+| season_genres | INT       |       |     |        |                 |
 
 ジャンル (genres)
 | カラム名       | データ型  | NULL  | キー | 初期値 | AUTO INCREMENT |
@@ -51,9 +52,9 @@
 | genre_name     | VARCHAR(20) |       | INDEX |        |                 |
 
 
-エピソードとジャンルの中間テーブル (episode_genre)
+シーズンとジャンルの中間テーブル (season_genre)
 | カラム名           | データ型  | NULL  | キー | 初期値 | AUTO INCREMENT |
 |--------------------|----------|-------|-----|--------|-----------------|
-| episode_genre_id   | INT      |       | PK  |        | YES             |
+| season_genre_id   | INT      |       | PK  |        | YES             |
 | episode_id         | INT      |       | FK  |        |                 |
 | genre_id           | INT      |       | FK  |        |                 |
