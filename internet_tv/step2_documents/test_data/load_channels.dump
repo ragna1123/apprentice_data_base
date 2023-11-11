@@ -4,5 +4,5 @@ INSERT INTO `channels`(channel_name) VALUES
 ('ドラマ'),
 ('映画'),
 ('音楽'),
-('ニュース1'),
+('ニュース'),
 ('スポーツ');

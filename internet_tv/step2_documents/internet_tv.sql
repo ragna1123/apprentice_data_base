@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS channels,
                      episodes,
                      seasons,
                      genres,
-                     episode_genre;
+                     program_genre;
 
 -- テーブル定義
 -- チャンネル (channels) テーブル
@@ -59,11 +59,11 @@ CREATE TABLE episodes (
 CREATE TABLE seasons (
     season_id INT NOT NULL AUTO_INCREMENT,
     season_title VARCHAR(50) NOT NULL,
-    season_num INT,
+    season_number INT,
     episode_total_num INT NOT NULL,
     PRIMARY KEY (season_id),
     INDEX (season_title),
-    INDEX (season_num)
+    INDEX (season_number)
 );
 
 -- ジャンル (genres) テーブル
@@ -74,13 +74,21 @@ CREATE TABLE genres (
     INDEX (genre_name)
 );
 
--- エピソードとジャンルの中間テーブル (episode_genre) テーブル
+-- 番組とジャンルの中間テーブル (episode_genre) テーブル
 CREATE TABLE program_genre (
     program_genre_id INT NOT NULL AUTO_INCREMENT,
     program_id INT NOT NULL, -- プログラムテーブルの外部キー
     genre_id INT NOT NULL, -- ジャンルテーブルの外部キー
     PRIMARY KEY (program_genre_id)
 );
+
+source ./test_data/load_program_genre.dump ;
+source ./test_data/load_channels.dump ;
+source ./test_data/load_episodes.dump ;
+source ./test_data/load_genres.dump ;
+source ./test_data/load_programs.dump ;
+source ./test_data/load_seasons.dump ;
+source ./test_data/load_time_tables.dump ;
 
 -- 外部キー設定
 ALTER TABLE programs
@@ -94,14 +102,5 @@ ALTER TABLE episodes
     ADD FOREIGN KEY (season_id) REFERENCES seasons(season_id) ON DELETE CASCADE;
 
 ALTER TABLE program_genre
-    ADD FOREIGN KEY (program_id) REFERENCES programs(program_id),
+    ADD FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE CASCADE,
     ADD FOREIGN KEY (genre_id) REFERENCES genres(genre_id) ON DELETE CASCADE;
-
-source ./test_data/load_channels.dump ;
-source ./test_data/load_episodes.dump ;
-source ./test_data/load_genres.dump ;
-source ./test_data/load_programs.dump ;
-source ./test_data/load_episodes.dump ;
-source ./test_data/load_seasons.dump ;
-source ./test_data/load_time_tables.dump ;
-
